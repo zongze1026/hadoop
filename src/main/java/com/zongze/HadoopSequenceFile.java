@@ -1,20 +1,30 @@
 package com.zongze;
+
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
+
+import javax.xml.ws.soap.Addressing;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Create By xzz on 2019/7/25
- *
+ * <p>
  * 文件存储类型：key-value
  * 类描述：sequencefile在写入的时候可以设置同步点,所以该类型的文件是可切割的
  * 压缩：1.record压缩：这种压缩类型是针对value值进行压缩
- *       2.block压缩：该种压缩是将多条record合并成block然后进行压缩，压缩过程中key和value会一起被压缩
- *       3.不压缩
+ * 2.block压缩：该种压缩是将多条record合并成block然后进行压缩，压缩过程中key和value会一起被压缩
+ * 3.不压缩
+ * record存储结构：header__sync__record
+ * block存储结构：header__sync__block
+ * <p>
+ * header结构：seq__version(版本号)__key和value全限定名称__压缩信息__用户定义的元数据__同步标记sync marker
+ * record结构：recordLength__keyLength__key__value
+ * block结构：recordNum(record数量)__compressedKeyLength(压缩key长度)__compressedKeys(压缩key值)__compressedValueLength(值长度)__compressedValues(压缩值)
  */
 public class HadoopSequenceFile {
 
@@ -22,8 +32,49 @@ public class HadoopSequenceFile {
     public static void main(String[] args) throws IOException {
 //        writeSeqFile();
 //        readSeqFile();
-//        SeqFileBySeek();
-        SeqFileBySync();
+//        seqFileBySeek();
+//        seqFileBySync();
+//        seqFileBySort();
+        seqFileByMerge();
+    }
+
+    /**
+     * 合并path1和path2到path3中去
+     */
+    private static void seqFileByMerge() throws IOException {
+        //创建无序的文件
+        Configuration conf = new Configuration();
+        FileSystem fileSystem = FileSystem.get(conf);
+        Path path1 = new Path("/usr/root/hadoop/testSort.seq");
+        Path path2 = new Path("/usr/root/hadoop/Sorted.seq");
+        Path path3 = new Path("/usr/root/hadoop/merge.seq");
+
+        //创建排序器
+        SequenceFile.Sorter sorter = new SequenceFile.Sorter(fileSystem, IntWritable.class, Text.class, conf);
+        sorter.merge(new Path[]{path1, path2}, path3);
+    }
+
+    /**
+     * sequenceFile排序
+     */
+    private static void seqFileBySort() throws IOException {
+        //创建无序的文件
+        Configuration conf = new Configuration();
+        FileSystem fileSystem = FileSystem.get(conf);
+        Path source = new Path("/usr/root/hadoop/testSort.seq");
+        //创建seqfile的写入器
+        SequenceFile.Writer writer = SequenceFile.createWriter(fileSystem, conf, source, IntWritable.class, Text.class);
+        Random random = new Random(100);
+        for (int i = 0; i < 50; i++) {
+            writer.append(new IntWritable(random.nextInt()), new Text("tom"));
+        }
+        writer.close();
+
+        //读取无序文件并对其进行排序
+        SequenceFile.Sorter sorter = new SequenceFile.Sorter(fileSystem, IntWritable.class, Text.class, conf);
+        //排完序的文件存储位置
+        Path dist = new Path("/usr/root/hadoop/Sorted.seq");
+        sorter.sort(source, dist);
     }
 
     private static void writeSeqFile() throws IOException {
@@ -54,11 +105,12 @@ public class HadoopSequenceFile {
         while (reader.next(key, value)) {
             System.out.println(key.get() + "=" + value.toString());
         }
+        reader.close();
 
     }
 
 
-    private static void SeqFileBySeek() throws IOException {
+    private static void seqFileBySeek() throws IOException {
         Configuration conf = new Configuration();
         FileSystem fileSystem = FileSystem.get(conf);
         Path path = new Path("/usr/root/hadoop/test.seq");
@@ -71,10 +123,11 @@ public class HadoopSequenceFile {
             long position = reader.getPosition();  //获取到seqfile的定位
             System.out.println(position + ":" + key.get() + "=" + value.toString());
         }
+        reader.close();
     }
 
 
-    private static void SeqFileBySync() throws IOException {
+    private static void seqFileBySync() throws IOException {
         Configuration conf = new Configuration();
         FileSystem fileSystem = FileSystem.get(conf);
         Path path = new Path("/usr/root/hadoop/test.seq");
@@ -88,6 +141,7 @@ public class HadoopSequenceFile {
             long position = reader.getPosition();  //获取到seqfile的定位
             System.out.println(position + ":" + key.get() + "=" + value.toString());
         }
+        reader.close();
     }
 
 
