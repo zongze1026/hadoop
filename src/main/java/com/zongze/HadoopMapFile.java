@@ -5,6 +5,7 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.MapFile;
 import org.apache.hadoop.io.Text;
+
 import java.io.IOException;
 
 /**
@@ -28,13 +29,13 @@ public class HadoopMapFile {
         Configuration conf = new Configuration();
         FileSystem fileSystem = FileSystem.get(conf);
         String distDir = "/usr/root/mapfile";
-        MapFile.Reader reader = new MapFile.Reader(fileSystem,distDir,conf);
+        MapFile.Reader reader = new MapFile.Reader(fileSystem, distDir, conf);
         IntWritable key = new IntWritable();
         key.set(4999);
         Text value = new Text();
         reader.get(key, value);
         reader.close();
-        System.out.println(key.get()+"="+value.toString());
+        System.out.println(key.get() + "=" + value.toString());
     }
 
 
