@@ -6,6 +6,9 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.Random;
 
@@ -33,7 +36,8 @@ public class HadoopSequenceFile {
 //        seqFileBySeek();
 //        seqFileBySync();
 //        seqFileBySort();
-        seqFileByMerge();
+//        seqFileByMerge();
+        convertToSeqFile();
     }
 
     /**
@@ -91,6 +95,32 @@ public class HadoopSequenceFile {
         }
         writer.close();
     }
+
+
+    private static void convertToSeqFile() throws IOException {
+        Configuration conf = new Configuration();
+        FileSystem fileSystem = FileSystem.get(conf);
+        String sourcePath = "F:\\hadoop\\data\\data.txt";
+        Path path = new Path("/usr/root/in/data.seq");
+        //创建seqfile的写入器
+        SequenceFile.Writer writer = SequenceFile.createWriter(fileSystem, conf, path, IntWritable.class, Text.class);
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(sourcePath));
+            String line = null;
+            while ((line = reader.readLine()) != null) {
+                String key = line.substring(2);
+                String value = line.substring(0, 2);
+                writer.append(new IntWritable(Integer.valueOf(key)), new Text(value));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            reader.close();
+        }
+
+    }
+
 
     private static void readSeqFile() throws IOException {
         Configuration conf = new Configuration();

@@ -6,6 +6,7 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.partition.InputSampler;
 import org.apache.hadoop.mapreduce.lib.partition.TotalOrderPartitioner;
@@ -37,10 +38,12 @@ public class TaskApp {
         job.setNumReduceTasks(4);
         //设置输出文件
         FileOutputFormat.setOutputPath(job, new Path(args[1]));
-        job.setMapOutputValueClass(IntWritable.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(IntWritable.class);
+        //设置文件输入类型
+        job.setInputFormatClass(SequenceFileInputFormat.class);
+        job.setMapOutputValueClass(Text.class);
+        job.setMapOutputKeyClass(IntWritable.class);
+        job.setOutputKeyClass(IntWritable.class);
+        job.setOutputValueClass(Text.class);
         job.setMapperClass(HadoopTempMapper.class);
         job.setReducerClass(HadoopReducer.class);
         //设置分区文件
