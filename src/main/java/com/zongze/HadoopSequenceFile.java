@@ -6,8 +6,6 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
-
-import javax.xml.ws.soap.Addressing;
 import java.io.IOException;
 import java.util.Random;
 
