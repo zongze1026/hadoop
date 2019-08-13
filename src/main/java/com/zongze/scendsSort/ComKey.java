@@ -1,6 +1,7 @@
 package com.zongze.scendsSort;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -12,13 +13,13 @@ import java.io.IOException;
  */
 public class ComKey implements WritableComparable<ComKey> {
 
-    public IntWritable year = new IntWritable();
+    public Text year = new Text();
     public IntWritable temp = new IntWritable();
 
     public ComKey() {
     }
 
-    public ComKey(IntWritable year, IntWritable temp) {
+    public ComKey(Text year, IntWritable temp) {
         this.year = year;
         this.temp = temp;
     }
@@ -37,8 +38,8 @@ public class ComKey implements WritableComparable<ComKey> {
 
     @Override
     public int compareTo(ComKey o) {
-        if (year != o.year) {
-            return year.get() - o.year.get();
+        if (Integer.parseInt(year.toString()) != Integer.parseInt(o.year.toString())) {
+            return Integer.parseInt(year.toString()) - Integer.parseInt(o.year.toString());
         }
         return temp.get() - o.temp.get();
     }

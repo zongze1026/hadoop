@@ -48,21 +48,21 @@ public class HadoopSequenceFile {
     private static void prepareSecondsSortData() throws IOException {
         Configuration conf = new Configuration();
         FileSystem fileSystem = FileSystem.get(conf);
-        Path path = new Path("/usr/root/in/2nd.seq");
+        Path path = new Path("/usr/root/in/3nd.seq");
         //创建seqfile的写入器
-        SequenceFile.Writer writer = SequenceFile.createWriter(fileSystem, conf, path, IntWritable.class, IntWritable.class);
+        SequenceFile.Writer writer = SequenceFile.createWriter(fileSystem, conf, path, Text.class, IntWritable.class);
 
         Random random = new Random();
         for (int i = 0; i < 100000; i++) {
-            writer.append(new IntWritable(1990 + random.nextInt(10)), new IntWritable(random.nextInt(60) - 30));
+            writer.append(new Text((1990 + random.nextInt(10)+"")), new IntWritable(random.nextInt(60) - 30));
         }
 
-        writer.append(new IntWritable(1990),new IntWritable(40));
-        writer.append(new IntWritable(1991),new IntWritable(50));
-        writer.append(new IntWritable(1992),new IntWritable(55));
-        writer.append(new IntWritable(1993),new IntWritable(60));
-        writer.append(new IntWritable(1994),new IntWritable(65));
-        writer.append(new IntWritable(1995),new IntWritable(70));
+        writer.append(new Text("1990"),new IntWritable(40));
+        writer.append(new Text("1991"),new IntWritable(50));
+        writer.append(new Text("1992"),new IntWritable(55));
+        writer.append(new Text("1993"),new IntWritable(60));
+        writer.append(new Text("1994"),new IntWritable(65));
+        writer.append(new Text("1995"),new IntWritable(70));
         writer.close();
     }
 
