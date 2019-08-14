@@ -1,4 +1,5 @@
-package com.zongze.scendsSort;
+package com.zongze.reducejoin;
+
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 
@@ -17,6 +18,6 @@ public class ComKeyGroup extends WritableComparator {
     public int compare(WritableComparable a, WritableComparable b) {
         ComKey key1 = (ComKey) a;
         ComKey key2 = (ComKey) b;
-        return key1.compareTo(key2);
+        return Integer.parseInt(key1.year.toString()) - Integer.parseInt( key2.year.toString());
     }
 }

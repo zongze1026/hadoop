@@ -1,4 +1,5 @@
-package com.zongze.scendsSort;
+package com.zongze.scendsort;
+
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
 

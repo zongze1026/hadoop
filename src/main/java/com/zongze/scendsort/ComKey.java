@@ -1,5 +1,6 @@
-package com.zongze.scendsSort;
-import org.apache.hadoop.io.IntWritable;
+package com.zongze.scendsort;
+
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -11,36 +12,35 @@ import java.io.IOException;
  */
 public class ComKey implements WritableComparable<ComKey> {
 
-    public IntWritable year = new IntWritable();
-    public IntWritable temp = new IntWritable();
+    public Text firstKey = new Text();
+    public Text scendsKey = new Text();
 
     public ComKey() {
     }
 
-    public ComKey(IntWritable year, IntWritable temp) {
-        this.year = year;
-        this.temp = temp;
+    public ComKey(Text year, Text temp) {
+        this.firstKey = year;
+        this.scendsKey = temp;
     }
 
     @Override
     public void write(DataOutput out) throws IOException {
-        year.write(out);
-        temp.write(out);
+        firstKey.write(out);
+        scendsKey.write(out);
     }
 
     @Override
     public void readFields(DataInput in) throws IOException {
-        year.readFields(in);
-        temp.readFields(in);
+        firstKey.readFields(in);
+        scendsKey.readFields(in);
     }
 
     /**
-     * 组合key的比较方法会在map
-     * 阶段的第一次排序被调用
+     * 用于第一次排序时作比较
      */
     @Override
     public int compareTo(ComKey o) {
-        return this.year.get() - o.year.get();
+        return firstKey.toString().compareTo(o.firstKey.toString());
     }
 
 

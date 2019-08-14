@@ -1,4 +1,4 @@
-package com.zongze.scendsSort;
+package com.zongze.scendsort;
 
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableComparator;
@@ -15,19 +15,16 @@ public class ComKeySort extends WritableComparator {
         super(ComKey.class, true);
     }
 
-
-    /**
-     * 这个比较方法会在map阶段
-     * 的第二次排序被调用
-     */
     @Override
     public int compare(WritableComparable a, WritableComparable b) {
         ComKey key1 = (ComKey) a;
         ComKey key2 = (ComKey) b;
-        if (key1.year.get() == key2.year.get()) {
-            return key1.temp.get() - key2.temp.get();
+        String string1 = key1.firstKey.toString();
+        String string2 = key2.firstKey.toString();
+        if (!string1.equals(string2)) {
+            return string1.compareTo(string2);
         } else {
-            return key1.year.get() - key2.year.get();
+            return key1.scendsKey.toString().compareTo(key2.scendsKey.toString());
         }
     }
 }

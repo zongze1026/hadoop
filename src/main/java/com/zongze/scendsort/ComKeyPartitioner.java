@@ -1,4 +1,4 @@
-package com.zongze.scendsSort;
+package com.zongze.scendsort;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Partitioner;
@@ -11,7 +11,7 @@ public class ComKeyPartitioner extends Partitioner<ComKey, IntWritable> {
 
     @Override
     public int getPartition(ComKey comKey, IntWritable intWritable, int numPartitions) {
-        int year = comKey.year.get();
-        return year % numPartitions;
+        String year = comKey.firstKey.toString();
+        return year.hashCode() % numPartitions;
     }
 }
